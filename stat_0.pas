@@ -1,6 +1,6 @@
 {$M 40000,0,0}
 Program statistika_dasar;
-uses WinCRT,dos,stat_m;
+uses CRT,dos,stat_m;
 var opsi,opsi1,opsi2,opsi3 : char;
 	 i : byte;
 
@@ -90,7 +90,7 @@ end;
 		 gotoxy(25,4);   write('                               ');
 		 gotoxy(25,5);   write(' A. Tabel Z                    ');
 		 gotoxy(25,6);   write(' B. Tabel t                    ');
-		 gotoxy(25,7);   write(' C. Tabel Chiý                 ');
+		 gotoxy(25,7);   write(' C. Tabel ChiÃ½                 ');
 		 gotoxy(25,8);   write(' X. [MENU UTAMA]               ');
 		 gotoxy(25,9);   write('                               ');
 		 textcolor(yellow);
