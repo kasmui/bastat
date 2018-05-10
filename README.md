@@ -19,8 +19,29 @@ PANDUAN INSTALASI SOFTWARE BASTAT
 13. Ingat! Untuk memilih dalam menu utama dan menu lainnya tidak menggunakan mouse, tapi
 memilih huruf di depannya, Misal A, B, C, D, E, F, G, H, I, J, K, L, M dan X (untuk keluar).
 
-Selamat bereksplorasi, semoga mendapat manfaat langsung.
+
+    gotoxy(25,2);   write('  MENU UTAMA BASIC STATISTICS  ');
+		textbackground(7); textcolor(blue);
+		gotoxy(25,4);   write('                               ');
+		gotoxy(25,5);   write(' A. STATISTIKA DESKRIPTIF      ');
+		gotoxy(25,6);   write(' B. STATISTIKA EKSPLORATIF     ');
+		gotoxy(25,7);   write(' C. STATISTIKA KOMPARATIF      ');
+		gotoxy(25,8);   write(' D. ONE-WAY ANOVA/UJI BARTLETT ');
+		gotoxy(25,9);   write(' E. REGRESI LINIER/NONLINIER   ');
+		gotoxy(25,10);  write(' F. KORELASI TUNGGAL           ');
+		gotoxy(25,11);  write(' G. KORELASI/REGRESI GANDA     ');
+		gotoxy(25,12);  write(' H. REGRESI MULTIPEL           ');
+		gotoxy(25,13);  write(' I. ANAVA MULTI JALUR          ');
+		gotoxy(25,14);  write(' J. STATISTIKA NONPARAMETRIK   ');
+		gotoxy(25,15);  write(' K. DISTRIBUSI PROBABILITAS    ');
+		gotoxy(25,16);  write(' L. DAFTAR FILE                ');
+    gotoxy(25,17);  write(' M. MANAJEMEN DATA             ');
+		gotoxy(25,18);  write(' X. KELUAR                     ');
+    gotoxy(25,19); write('                               ');
+
 
 Hasil hitungan dari Bastat ini telah dibandingkan dengan output dari aplikasi statistika SPSS dan Minitab, sehingga hasil hitungannya dinyatakan valid.
+
+Selamat bereksplorasi, semoga mendapat manfaat langsung.
 
 Referensi: Buku METODA STATISTIKA, Pengarang: SUDJANA
