@@ -1,0 +1,76 @@
+name: Build Statistika Studio Android 2.1.1
+
+on:
+  push:
+    branches:
+      - statistika-studio-android-2.1.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Bundle JavaScript libraries locally
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p android-statistika/app/src/main/assets/libs
+          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/jstat.min.js https://cdn.jsdelivr.net/npm/jstat@1.9.6/dist/jstat.min.js
+          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/numeric.min.js https://cdn.jsdelivr.net/npm/numeric@1.2.6/numeric.min.js
+          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/papaparse.min.js https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js
+          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/xlsx.full.min.js https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js
+          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/plotly.min.js https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js
+          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/jszip.min.js https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js
+          test -s android-statistika/app/src/main/assets/libs/plotly.min.js
+          grep -q "libs/jstat.min.js" android-statistika/app/src/main/assets/index.html
+
+      - name: Build debug APK
+        working-directory: android-statistika
+        run: gradle --no-daemon clean assembleDebug
+
+      - name: Verify APK
+        shell: bash
+        run: |
+          set -euxo pipefail
+          APK=android-statistika/app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging "$APK" | tee apk-badging.txt
+          grep -q "package: name='cloud.kasmui.statistikastudio'" apk-badging.txt
+          grep -q "application-label:'Statistika Studio'" apk-badging.txt
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose "$APK"
+          cp "$APK" StatistikaStudio-Android-2.1.1.apk
+          sha256sum StatistikaStudio-Android-2.1.1.apk > StatistikaStudio-Android-2.1.1-SHA256.txt
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StatistikaStudio-Android-2.1.1
+          path: |
+            StatistikaStudio-Android-2.1.1.apk
+            StatistikaStudio-Android-2.1.1-SHA256.txt
+            apk-badging.txt
+          if-no-files-found: error
