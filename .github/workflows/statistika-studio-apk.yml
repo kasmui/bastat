@@ -27,10 +27,12 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --list_installed | head -80
+          "$SDKMANAGER" --list_installed | head -80
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
