@@ -45,7 +45,7 @@ jobs:
           set -euxo pipefail
           mkdir -p android-statistika/app/src/main/assets/libs
           curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/jstat.min.js https://cdn.jsdelivr.net/npm/jstat@1.9.6/dist/jstat.min.js
-          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/numeric.min.js https://cdn.jsdelivr.net/npm/numeric@1.2.6/numeric.min.js
+          curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/numeric.min.js https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js
           curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/papaparse.min.js https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js
           curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/xlsx.full.min.js https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js
           curl -fL --retry 4 --retry-delay 2 -o android-statistika/app/src/main/assets/libs/plotly.min.js https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js
