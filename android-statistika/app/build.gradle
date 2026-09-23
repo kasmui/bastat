@@ -1,0 +1,29 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'cloud.kasmui.statistikastudio'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'cloud.kasmui.statistikastudio'
+        minSdk 21
+        targetSdk 34
+        versionCode 211
+        versionName '2.1.1'
+    }
+
+    buildTypes {
+        debug { minifyEnabled false }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
