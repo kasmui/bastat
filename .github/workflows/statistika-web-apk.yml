@@ -1,0 +1,75 @@
+name: Build Statistika Web APK 1.0.0
+
+on:
+  push:
+    branches:
+      - statistika-web-apk-1.0.0
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK 34
+        shell: bash
+        run: |
+          set -euxo pipefail
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build APK
+        working-directory: android-statistika-web
+        run: gradle --no-daemon clean assembleDebug
+
+      - name: Verify APK
+        shell: bash
+        run: |
+          set -euxo pipefail
+          APK=android-statistika-web/app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging "$APK" | tee apk-badging.txt
+          grep -q "package: name='cloud.kasmui.statistika'" apk-badging.txt
+          grep -q "application-label:'Statistika Studio'" apk-badging.txt
+          grep -q "launchable-activity: name='cloud.kasmui.statistika.MainActivity'" apk-badging.txt
+          "$ANDROID_HOME/build-tools/34.0.0/apksigner" verify --verbose "$APK" | tee apk-signature.txt
+
+          rm -rf apk-unpacked
+          mkdir apk-unpacked
+          unzip -q "$APK" "classes*.dex" -d apk-unpacked
+          cat apk-unpacked/classes*.dex | strings | grep -F "https://kasmui.cloud/statistika/"
+          cat apk-unpacked/classes*.dex | strings | grep -F "Lcloud/kasmui/statistika/MainActivity;"
+
+          cp "$APK" StatistikaStudio-Web-1.0.0.apk
+          sha256sum StatistikaStudio-Web-1.0.0.apk > StatistikaStudio-Web-1.0.0-SHA256.txt
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StatistikaStudio-Web-1.0.0
+          path: |
+            StatistikaStudio-Web-1.0.0.apk
+            StatistikaStudio-Web-1.0.0-SHA256.txt
+            apk-badging.txt
+            apk-signature.txt
+          if-no-files-found: error
